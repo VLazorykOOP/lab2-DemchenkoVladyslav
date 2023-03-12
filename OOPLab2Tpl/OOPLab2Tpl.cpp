@@ -6,7 +6,15 @@
 using namespace std;
 #include <bitset>
 #pragma warning(disable : 4996) 
-
+struct CharCode
+{
+	unsigned short Row : 3; // номер рядка
+	unsigned short Pos : 3; // номер позиції в рядку
+	bool EvenNumber; // парність номера та позиції
+	unsigned short Code : 8; // код символа
+	bool EvenCode; // парність коду символа
+	unsigned short FullCode : 16; // повний шифр символа
+};
 int multiplyTwoNumbers(int a, int b) {
 	int result = 0;
 	while (b > 0) {
@@ -35,7 +43,7 @@ void Task1()
 			multiplyTwoNumbers(312, c), 32) -
 		multiplyTwoNumbers(b, 120) +
 		multiplyTwoNumbers(d, 127)) << endl;
-	//вираз, записаний із заміною операцій множення та ділення
+	//вираз, записаний із заміною операцій множення та ділення (з використанням додатково написаних функцій) 
 	system("pause");
 }
 void Task2()
@@ -63,7 +71,7 @@ void Task2()
 		for (unsigned short j = 0; j < size - 1; j++)
 		{
 			c = S[i][j];//поточний символ
-			r = 0;//поточний шифрований символ
+			r = 0;
 			r |= i;//додавання номера рядка
 			r <<= 3;//зсув на 3 біти, виділені під номер символа
 			r |= j;//додавання номера символа
@@ -96,6 +104,67 @@ void Task2()
 		}cout << endl;
 	}
 }
+void Task3()
+{
+	const int size = 8 + 1;
+	char** S = new char* [size]; // масив з 8 рядків
+	unsigned short** Rez = new unsigned short* [size]; // масив для зашифрованих символів рядків
+	unsigned char c;// змінна для символа, що буде шифруватися
+	unsigned short r, t, b; //змінні для вже зашифрованого символу та пошуку парності полів
+	cout << "Enter " << size - 1 << " strings" << endl; // вхідні дані - 8 рядків до 8 символів
+	for (unsigned short i = 0; i < size - 1; i++)
+		//введення рядків з розподіленням пам'яті під двовимірні масиви 
+	{
+		S[i] = new char[size];
+		Rez[i] = new unsigned short[16];
+		cin.getline(S[i], size);
+		while (strnlen(S[i], size) < size)//доповнення замалих рядків
+		{
+			strcat(S[i], " ");
+		}
+
+	}
+	for (unsigned short i = 0; i < size - 1; i++)
+	{
+		for (unsigned short j = 0; j < size - 1; j++)
+		{
+			CharCode cc;
+			cc.Code = S[i][j];//поточний символ
+			cc.Row = i;
+			cc.Pos = j;
+			cc.FullCode = 0;//поточний шифрований символ
+			cc.FullCode |= cc.Row;//додавання номера рядка
+			cc.FullCode <<= 3;//зсув на 3 біти, виділені під номер символа
+			cc.FullCode |= cc.Pos;//додавання номера символа
+			t = 1;
+			cc.EvenNumber = false;
+			for (unsigned short z = 0; z < 6; z++) // обчислення біта парності перших 2 полів
+			{
+				if (cc.FullCode & t) {
+					cc.EvenNumber = !cc.EvenNumber;
+				}
+				t <<= 1;
+			}
+			cc.FullCode <<= 1;//зсув на 1 біт, виділений під парність попередніх двох полів
+			cc.FullCode |= cc.EvenNumber;//додавання парності попередніх двої полів
+			cc.FullCode <<= 8;//зсув на 8 позицій для коду символа
+			cc.FullCode |= cc.Code;//додавання коду символа
+			t = 1;
+			cc.EvenCode = false;
+			for (unsigned short z = 0; z < 8; z++) // обчислення біта парності поереднього поля
+			{
+				if (cc.FullCode & t) {
+					cc.EvenCode = !cc.EvenCode;
+				}
+				t <<= 1;
+			}
+			cc.FullCode <<= 1;//зсув на 1 позицію для парності попереднього поля
+			cc.FullCode |= cc.EvenCode; // додавання парності попереднього поля
+			Rez[i][j] = cc.FullCode; //зашифрований символ додається у масив
+			cout << std::bitset<16>(Rez[i][j]) << " ";
+		}cout << endl;
+	}
+}
 /// @brief 
 /// @return 
 int main()
@@ -114,8 +183,8 @@ int main()
 		switch (ch) {
 		case '1': Task1();   break;
 		case '2': Task2();   break;
-		case '3': Task1();   break;
-		case '4': Task1();   break;
+		case '3': Task3();   break;
+		case '4': Task3();   break;
 		case '5': return 0;
 		case '6': return 0;
 		}
