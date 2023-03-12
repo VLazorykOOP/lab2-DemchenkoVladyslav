@@ -15,6 +15,14 @@ struct CharCode
 	bool EvenCode; // парність коду символа
 	unsigned short FullCode : 16; // повний шифр символа
 };
+struct Task4Struct
+{
+	unsigned short a : 4;
+	unsigned short b : 4;
+	unsigned short c : 12;
+	unsigned short d : 5;
+	bool e;
+};
 int multiplyTwoNumbers(int a, int b) {
 	int result = 0;
 	while (b > 0) {
@@ -167,6 +175,25 @@ void Task3()
 		cc.Row++;
 	} while (cc.Row != size - 2);
 }
+void Task4()
+{
+	Task4Struct t4s;
+	cout << "Enter 0 <= a <= 12,	0 <= b <= 9,	1940 <= c <= 2065,	0 <= d <= 31,	0 <= e <= 1" << endl;
+	unsigned short a, b, c, d;
+	bool e;
+	cin >> a >> b >> c >> d >> e;
+	if (a > 12 || b > 9 || c < 1940 || c>2065 || d > 31)
+		cout << "Wrong input" << endl;
+	else {
+		t4s.a = a;
+		t4s.b = b;
+		t4s.c = c;
+		t4s.d = d;
+		t4s.e = e;
+		cout << t4s.a << " " << t4s.b << " " << t4s.c << " " << t4s.d << " " << t4s.e;
+	}
+	cin.get();
+}
 /// @brief 
 /// @return 
 int main()
@@ -186,7 +213,7 @@ int main()
 		case '1': Task1();   break;
 		case '2': Task2();   break;
 		case '3': Task3();   break;
-		case '4': Task3();   break;
+		case '4': Task4();   break;
 		case '5': return 0;
 		case '6': return 0;
 		}
