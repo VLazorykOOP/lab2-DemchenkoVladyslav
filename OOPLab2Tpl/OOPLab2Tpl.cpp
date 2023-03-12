@@ -80,7 +80,7 @@ void Task2()
 			for (unsigned short z = 0; z < 6; z++) // обчислення біта парності перших 2 полів
 			{
 				if (r & t) {
-					b = !b;
+					b = ~b;
 				}
 				t <<= 1;
 			}
@@ -93,7 +93,7 @@ void Task2()
 			for (unsigned short z = 0; z < 8; z++) // обчислення біта парності поереднього поля
 			{
 				if (r & t) {
-					b = !b;
+					b = ~b;
 				}
 				t <<= 1;
 			}
@@ -106,7 +106,7 @@ void Task2()
 }
 void Task3()
 {
-	const int size = 8 + 1;
+	const unsigned short size = 8 + 1;
 	char** S = new char* [size]; // масив з 8 рядків
 	unsigned short** Rez = new unsigned short* [size]; // масив для зашифрованих символів рядків
 	unsigned char c;// змінна для символа, що буде шифруватися
@@ -124,14 +124,13 @@ void Task3()
 		}
 
 	}
-	for (unsigned short i = 0; i < size - 1; i++)
+	CharCode cc;
+	cc.Row = 0;
+	do
 	{
-		for (unsigned short j = 0; j < size - 1; j++)
-		{
-			CharCode cc;
-			cc.Code = S[i][j];//поточний символ
-			cc.Row = i;
-			cc.Pos = j;
+		cc.Pos = 0;
+		do {
+			cc.Code = S[cc.Row][cc.Pos];//поточний символ
 			cc.FullCode = 0;//поточний шифрований символ
 			cc.FullCode |= cc.Row;//додавання номера рядка
 			cc.FullCode <<= 3;//зсув на 3 біти, виділені під номер символа
@@ -160,10 +159,13 @@ void Task3()
 			}
 			cc.FullCode <<= 1;//зсув на 1 позицію для парності попереднього поля
 			cc.FullCode |= cc.EvenCode; // додавання парності попереднього поля
-			Rez[i][j] = cc.FullCode; //зашифрований символ додається у масив
-			cout << std::bitset<16>(Rez[i][j]) << " ";
-		}cout << endl;
-	}
+			Rez[cc.Row][cc.Pos] = cc.FullCode; //зашифрований символ додається у масив
+			cout << std::bitset<16>(Rez[cc.Row][cc.Pos]) << " ";
+			cc.Pos++;
+		} while (cc.Pos != size - 2);
+		cout << endl;
+		cc.Row++;
+	} while (cc.Row != size - 2);
 }
 /// @brief 
 /// @return 
